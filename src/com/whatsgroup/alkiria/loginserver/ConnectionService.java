@@ -57,9 +57,11 @@ public class ConnectionService implements Runnable{
         int tipus = buffer.getInt();
         if(tipus == 1){
             //Crear usuari
-            byte[] arrlogin = new byte[buffer.capacity()];
-             buffer.get(arrlogin);
-            System.out.println(arrlogin.toString());     
+            //System.out.println(buffer.asCharBuffer());
+            byte[] arrlogin = new byte[64];
+            buffer.get(arrlogin);
+            
+            System.out.println(new String(arrlogin,"UTF-8"));     
         }
         
     }
