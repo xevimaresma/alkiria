@@ -41,8 +41,11 @@ public class MsgUserCreate {
         
         ByteBuffer buffer = ByteBuffer.wrap(valors);
         buffer.putInt(TIPUS_USER_CREATE);
+        //buffer.put(loginchars,4,loginchars.length);
+        //buffer.put(passchars,68,passchars.length);
         buffer.put(loginchars);
         buffer.put(passchars);
+
         return buffer.array();
     }
 }

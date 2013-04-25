@@ -32,7 +32,7 @@ public class AlkiriaClient {
     public static final String STOP = "#quitServer";
     public static final int PORT = 35421;
     private BufferedReader in = null;
-    private BufferedWriter out = null;
+    private DataOutputStream out = null;
     private Socket client = null;
     
     /**
@@ -115,11 +115,12 @@ Servidor - Client
     
     public void sendMessage(byte[] msg){
         try {
-            Socket client = new Socket("localhost",PORT);
-            DataOutputStream out = new DataOutputStream(client.getOutputStream());
+            System.out.println(msg);
+            client = new Socket("localhost",PORT);
+            out = new DataOutputStream(client.getOutputStream());
             //Escribim text
             out.writeInt(msg.length);
-            out.write(msg,0,msg.length);
+            out.write(msg);
             out.flush();
         } catch (UnknownHostException ex) {
             Logger.getLogger(AlkiriaClient.class.getName()).log(Level.SEVERE, null, ex);
