@@ -6,10 +6,12 @@ package com.whatsgroup.alkiria.loginserver;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,7 +21,7 @@ import java.util.logging.Logger;
  */
 public class ConnectionService implements Runnable{
     Socket socket;
-    BufferedReader in;
+    DataInputStream in;
     BufferedWriter out;
     AlkiriaLoginServer server;
     
@@ -31,7 +33,7 @@ public class ConnectionService implements Runnable{
     @Override
     public void run() {
         try {
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            in = new DataInputStream(socket.getInputStream());
             out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             listen();
         } catch (IOException ex) {
@@ -48,16 +50,18 @@ public class ConnectionService implements Runnable{
     }
     
     public void listen() throws IOException{
-        String inputLine;
-        while((inputLine=in.readLine())!=null){
-            if(inputLine.startsWith(AlkiriaLoginServer.STOP)){
-                server.close();
-            }else{
-                //Enviem els missatges...
-                System.out.println(inputLine);
-                broadcast(inputLine);
-            }
+        int len = in.readInt();
+        byte[] data = new byte[len];
+        in.readFully(data);
+        ByteBuffer buffer = ByteBuffer.wrap(data);
+        int tipus = buffer.getInt();
+        if(tipus == 1){
+            //Crear usuari
+            byte[] arrlogin = new byte[buffer.capacity()];
+             buffer.get(arrlogin);
+            System.out.println(arrlogin.toString());     
         }
+        
     }
     
     private void broadcast(String missatge) throws IOException{
