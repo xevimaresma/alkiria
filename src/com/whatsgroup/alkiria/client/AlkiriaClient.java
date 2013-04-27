@@ -6,6 +6,7 @@ package com.whatsgroup.alkiria.client;
 
 import com.sun.xml.internal.messaging.saaj.packaging.mime.util.OutputUtil;
 import com.whatsgroup.alkiria.loginserver.AlkiriaLoginServer;
+import com.whatsgroup.alkiria.messages.MsgSender;
 import com.whatsgroup.alkiria.messages.MsgUserCreate;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -53,6 +54,7 @@ public class AlkiriaClient {
         System.out.println("*****************************");
         System.out.println("1. Crear Usuaris");
         System.out.println("2. Obtenir Token");
+        System.out.println("3. Enviar missatge");
         System.out.println("0. Sortir");
         
         Scanner lector = new Scanner(System.in);
@@ -70,11 +72,28 @@ public class AlkiriaClient {
                 break;
                 case 2:
                 break;
+                case 3:
+                    enviaMsgUDP();
+                break;
                 default:
                     System.out.println("Ha d'introduir una opció del menú.");
                     System.out.println("");
             }
         }
+    }
+    
+    private void enviaMsgUDP()  {
+        Scanner lector = new Scanner(System.in);
+        
+        System.out.println("Escriu el missatge: ");
+        String msg = lector.nextLine();
+        MsgSender missatge=new MsgSender(msg);
+        try {
+            missatge.enviaMsg();
+        } catch (Exception e) {
+            
+        }
+        
     }
     
     private void menuCrearUsuari(){
