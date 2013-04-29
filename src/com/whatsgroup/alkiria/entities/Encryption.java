@@ -9,6 +9,8 @@ import java.util.Arrays;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.DESedeKeySpec;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -74,10 +76,15 @@ public class Encryption {
                 keyBytes[k++] = keyBytes[j++];
         }
 
-        final SecretKey key = new SecretKeySpec(keyBytes, "DESede");
-        final IvParameterSpec iv = new IvParameterSpec(new byte[8]);
-        final Cipher cipher = Cipher.getInstance("DESede/CBC/PKCS5Padding");
-        cipher.init(Cipher.ENCRYPT_MODE, key, iv);
+        DESedeKeySpec keySpec = new DESedeKeySpec(keyBytes);
+        SecretKeyFactory factory = SecretKeyFactory.getInstance("DESede");
+        SecretKey key = factory.generateSecret(keySpec);
+        
+        
+        //final SecretKey key = new SecretKeySpec(keyBytes, "DESede");
+        //final IvParameterSpec iv = new IvParameterSpec(new byte[8]);
+        final Cipher cipher = Cipher.getInstance("DESede");
+        cipher.init(Cipher.ENCRYPT_MODE, key);
 
         final byte[] plainTextBytes = message.getBytes("utf-8");
         final byte[] cipherText = cipher.doFinal(plainTextBytes);
@@ -94,11 +101,15 @@ public class Encryption {
     		keyBytes[k++] = keyBytes[j++];
     	}
 
-    	final SecretKey key = new SecretKeySpec(keyBytes, "DESede");
+    	/*final SecretKey key = new SecretKeySpec(keyBytes, "DESede");
     	final IvParameterSpec iv = new IvParameterSpec(new byte[8]);
     	final Cipher decipher = Cipher.getInstance("DESede/CBC/PKCS5Padding");
-    	decipher.init(Cipher.DECRYPT_MODE, key, iv);
-
+    	decipher.init(Cipher.DECRYPT_MODE, key, iv);*/
+        DESedeKeySpec keySpec = new DESedeKeySpec(keyBytes);
+        SecretKeyFactory factory = SecretKeyFactory.getInstance("DESede");
+        SecretKey key = factory.generateSecret(keySpec);
+        final Cipher decipher = Cipher.getInstance("DESede");
+        decipher.init(Cipher.DECRYPT_MODE, key);
     	// final byte[] encData = new
     	// sun.misc.BASE64Decoder().decodeBuffer(message);
         //System.out.println(message);
@@ -106,5 +117,4 @@ public class Encryption {
     	final byte[] plainText = decipher.doFinal(message);
         this.msgDesencriptat=new String(plainText, "UTF-8");    	
     }
-
 }
