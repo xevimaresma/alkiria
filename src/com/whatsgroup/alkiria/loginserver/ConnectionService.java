@@ -4,6 +4,8 @@
  */
 package com.whatsgroup.alkiria.loginserver;
 
+import com.whatsgroup.alkiria.db.DataBase;
+import com.whatsgroup.alkiria.entities.User;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
@@ -61,7 +63,11 @@ public class ConnectionService implements Runnable{
             byte[] arrlogin = new byte[64];
             buffer.get(arrlogin);
             
-            System.out.println(new String(arrlogin,"UTF-8"));     
+            System.out.println(new String(arrlogin,"UTF-8"));
+            //Creem l'usuari a la BD
+            DataBase db = new DataBase();
+            User user = new User(new String(arrlogin,"UTF-8"), null, null, null);
+            db.save(user);
         }
         
     }
