@@ -101,6 +101,8 @@ public class Encryption {
 
     	// final byte[] encData = new
     	// sun.misc.BASE64Decoder().decodeBuffer(message);
+        //System.out.println(message);
+        
     	final byte[] plainText = decipher.doFinal(message);
         this.msgDesencriptat=new String(plainText, "UTF-8");    	
     }
