@@ -4,7 +4,6 @@
  */
 package com.whatsgroup.alkiria.client;
 
-import com.sun.xml.internal.messaging.saaj.packaging.mime.util.OutputUtil;
 import com.whatsgroup.alkiria.loginserver.AlkiriaLoginServer;
 import com.whatsgroup.alkiria.messages.MsgSender;
 import com.whatsgroup.alkiria.messages.MsgUserCreate;
@@ -89,9 +88,10 @@ public class AlkiriaClient {
         String msg = lector.nextLine();
         MsgSender missatge=new MsgSender(msg);
         try {
+            missatge.setClau("prova");
             missatge.enviaMsg();
         } catch (Exception e) {
-            
+            e.printStackTrace();
         }
         
     }

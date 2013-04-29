@@ -67,6 +67,7 @@ public class Encryption {
     
     public void encrypt(String message) throws Exception {          
         final MessageDigest md = MessageDigest.getInstance("md5");
+        System.out.println(clauEncriptacio);
         final byte[] digestOfPassword = md.digest(clauEncriptacio.getBytes("utf-8"));
         final byte[] keyBytes = Arrays.copyOf(digestOfPassword, 24);
         for (int j = 0, k = 16; j < 8;) {
