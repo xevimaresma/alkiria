@@ -48,6 +48,7 @@ public class MsgSender {
         byte[] sendData = new byte[1024];
         byte[] receiveData = new byte[1024];   
         sendData=encripta.getMsgEncriptat();
+        System.out.println(new String(sendData));       
         DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
         clientSocket.send(sendPacket);
         DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);

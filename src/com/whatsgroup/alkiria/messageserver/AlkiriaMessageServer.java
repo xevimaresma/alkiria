@@ -28,14 +28,14 @@ public class AlkiriaMessageServer {
         while(true) {
             DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
             serverSocket.receive(receivePacket);            
-            String sentence = new String( receivePacket.getData());
-            System.out.println("He Rebut: " + sentence);                       
-            System.out.println("He Rebut 3: " + sentence.getBytes());
-            encripta.decrypt(sentence.getBytes());
+            byte[] dadesRebudes=receivePacket.getData();
+            String prova=new String(dadesRebudes);
+            System.out.println("He Rebut: " + prova);
+            encripta.decrypt(dadesRebudes);            
             System.out.println("He Rebut 2: " + encripta.getMsgDesencriptat());
             InetAddress IPAddress = receivePacket.getAddress();
             int port = receivePacket.getPort();
-            String capitalizedSentence = sentence.toUpperCase();
+            String capitalizedSentence = encripta.getMsgDesencriptat().toUpperCase();
             sendData = capitalizedSentence.getBytes();
             DatagramPacket sendPacket =
             new DatagramPacket(sendData, sendData.length, IPAddress, port);
