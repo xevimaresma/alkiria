@@ -11,7 +11,7 @@ import java.sql.Time;
  *
  * @author XeviPortatil
  */
-public class User extends BasicDBObject{
+public class User extends AlkiriaDataBaseObject{
     public User(){
     
     }
@@ -20,5 +20,10 @@ public class User extends BasicDBObject{
         put("pass",pass);
         put("ultimaconexio",ultimaConexio);
         put("frase",frase);
+    }
+
+    @Override
+    public String getTableName() {
+        return "users";
     }
 }
