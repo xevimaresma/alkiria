@@ -29,7 +29,8 @@ public class DataBase {
 
     public DataBase(){
         try {
-            mc = new MongoClient("alkiria.xevimr.eu");
+            //mc = new MongoClient("alkiria.xevimr.eu");
+            mc = new MongoClient("134.0.8.6");
             db = mc.getDB("test");
             //boolean auth = db.authenticate("admin", "admin".toCharArray());
             
@@ -62,6 +63,11 @@ public class DataBase {
         DBCollection tbl = db.getCollection(object.getTableName());
         tbl.save(object);
         return true;        
+    }
+    
+    public AlkiriaDataBaseObject find(AlkiriaDataBaseObject object){
+        DBCollection tbl = db.getCollection(object.getTableName());
+        return (AlkiriaDataBaseObject)tbl.findOne(object);
     }
     
 }

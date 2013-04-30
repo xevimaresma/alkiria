@@ -12,6 +12,7 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.ReadPreference;
 import com.sun.media.sound.AlawCodec;
+import com.whatsgroup.alkiria.db.DataBase;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -86,7 +87,7 @@ public class AlkiriaLoginServer {
     private void generateClientConnection(Socket clientToConnect){
         synchronized(getConnections()){
             System.out.println("Client connected...");
-            ConnectionService servei = new ConnectionService(this, clientToConnect);
+            ConnectionService servei = new ConnectionService(this, clientToConnect,new DataBase());
             getConnections().add(servei);
             (new Thread(servei)).start();
         }

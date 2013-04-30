@@ -26,4 +26,8 @@ public class User extends AlkiriaDataBaseObject{
     public String getTableName() {
         return "users";
     }
+    
+    public String toString(){
+        return "User: " + getString("mail") + " Pass: " + getString("pass");
+    }
 }

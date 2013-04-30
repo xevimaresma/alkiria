@@ -26,10 +26,12 @@ public class ConnectionService implements Runnable{
     DataInputStream in;
     BufferedWriter out;
     AlkiriaLoginServer server;
+    DataBase db;
     
-    public ConnectionService(AlkiriaLoginServer server, Socket socket){
+    public ConnectionService(AlkiriaLoginServer server, Socket socket, DataBase db){
         this.server = server;
         this.socket = socket;
+        this.db = db;
     }
 
     @Override
@@ -53,21 +55,35 @@ public class ConnectionService implements Runnable{
     
     public void listen() throws IOException{
         int len = in.readInt();
+        System.out.println("Len: " + len);
         byte[] data = new byte[len];
         in.readFully(data);
+        System.out.println("Len data: " + data.length);
         ByteBuffer buffer = ByteBuffer.wrap(data);
+        System.out.println("Len Buffer: " + buffer.capacity());
         int tipus = buffer.getInt();
         if(tipus == 1){
             //Crear usuari
             //System.out.println(buffer.asCharBuffer());
             byte[] arrlogin = new byte[64];
             buffer.get(arrlogin);
+            System.out.println("Len Buffer2: " + buffer.capacity());
+            byte[] arrpass = new byte[64];
+            buffer.get(arrpass);
+            String login = new String(arrlogin,"UTF-8").trim();
+            String pass = new String(arrpass,"UTF-8").trim();
+            System.out.println("Login: " + login);
+            System.out.println("Pass: " + pass);
             
-            System.out.println(new String(arrlogin,"UTF-8"));
-            //Creem l'usuari a la BD
-            DataBase db = new DataBase();
-            User user = new User(new String(arrlogin,"UTF-8"), null, null, null);
-            db.save(user);
+            //Comprobem si l'usuari ja existeix
+            
+            User user = new User(login, null, null, null);
+            //db.save(user);
+            System.out.println(db.find(user));
+//Creem l'usuari a la BD
+            
+            //User user = new User(new String(arrlogin,"UTF-8"), null, null, null);
+            //db.save(user);
         }
         
     }
