@@ -65,9 +65,9 @@ public class DataBase {
         return true;        
     }
     
-    public AlkiriaDataBaseObject find(AlkiriaDataBaseObject object){
+    public DBObject find(AlkiriaDataBaseObject object){
         DBCollection tbl = db.getCollection(object.getTableName());
-        return (AlkiriaDataBaseObject)tbl.findOne(object);
+        return tbl.findOne(object);
     }
     
 }

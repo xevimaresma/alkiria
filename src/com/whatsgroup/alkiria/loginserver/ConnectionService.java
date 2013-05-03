@@ -4,6 +4,7 @@
  */
 package com.whatsgroup.alkiria.loginserver;
 
+import com.mongodb.BasicDBObject;
 import com.whatsgroup.alkiria.db.DataBase;
 import com.whatsgroup.alkiria.entities.User;
 import java.io.BufferedReader;
@@ -72,15 +73,29 @@ public class ConnectionService implements Runnable{
             buffer.get(arrpass);
             String login = new String(arrlogin,"UTF-8").trim();
             String pass = new String(arrpass,"UTF-8").trim();
-            System.out.println("Login: " + login);
-            System.out.println("Pass: " + pass);
+            //System.out.println("Login: " + login);
+            //System.out.println("Pass: " + pass);
             
             //Comprobem si l'usuari ja existeix
             
-            User user = new User(login, null, null, null);
+            //User user = new User(login, null, null, null);
+            User user = new User();
+            user.setMail(login);
             //db.save(user);
-            System.out.println(db.find(user));
-//Creem l'usuari a la BD
+            BasicDBObject resultat = (BasicDBObject)db.find(user);
+            if(resultat==null){
+                //Creem l'usuari a la BD
+                user.setPass(pass);
+                db.save(user);
+                System.out.println(user);
+                System.out.println("Usuari Creat OK");
+            }else{
+                User resp = new User();
+                resp.loadFromDBObject((BasicDBObject)db.find(user));
+                System.out.println(resp);
+                System.out.println("Usuari Existent");
+            }
+
             
             //User user = new User(new String(arrlogin,"UTF-8"), null, null, null);
             //db.save(user);

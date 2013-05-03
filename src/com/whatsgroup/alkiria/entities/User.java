@@ -5,6 +5,7 @@
 package com.whatsgroup.alkiria.entities;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import java.sql.Time;
 
 /**
@@ -12,14 +13,65 @@ import java.sql.Time;
  * @author XeviPortatil
  */
 public class User extends AlkiriaDataBaseObject{
+    private String token;
+    private String mail;
+    private String pass;
+    private Time ultimaConexio;
+    private String frase;
+
     public User(){
     
     }
-    public User(String mail, String pass, Time ultimaConexio, String frase){
+    
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+        put("token",token);
+    }
+
+    public String getMail() {
+        return mail;
+    }
+
+    public void setMail(String mail) {
+        this.mail = mail;
         put("mail",mail);
+    }
+
+    public String getPass() {
+        return pass;
+    }
+
+    public void setPass(String pass) {
+        this.pass = pass;
         put("pass",pass);
+    }
+
+    public Time getUltimaConexio() {
+        return ultimaConexio;
+    }
+
+    public void setUltimaConexio(Time ultimaConexio) {
+        this.ultimaConexio = ultimaConexio;
         put("ultimaconexio",ultimaConexio);
+    }
+
+    public String getFrase() {
+        return frase;
+    }
+
+    public void setFrase(String frase) {
+        this.frase = frase;
         put("frase",frase);
+    }
+    
+    public void loadFromDBObject(BasicDBObject obj){
+        this.mail = obj.getString("mail");
+        this.pass = obj.getString("pass");
+        this.token = obj.getString("token");
     }
 
     @Override
@@ -28,6 +80,6 @@ public class User extends AlkiriaDataBaseObject{
     }
     
     public String toString(){
-        return "User: " + getString("mail") + " Pass: " + getString("pass");
+        return "User: " + this.mail + " Pass: " + this.pass;
     }
 }

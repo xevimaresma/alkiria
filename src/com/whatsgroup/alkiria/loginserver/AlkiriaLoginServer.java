@@ -108,8 +108,8 @@ public class AlkiriaLoginServer {
             
             DBCollection usertbl = db.getCollection("users");
             
-            User user = new User("xevimaresma2@gmail.com","proves",null,"estat");
-            usertbl.save(user);
+            //User user = new User("xevimaresma2@gmail.com","proves",null,"estat");
+            //usertbl.save(user);
             
             DBCursor cursor = usertbl.find();
             while(cursor.hasNext()){

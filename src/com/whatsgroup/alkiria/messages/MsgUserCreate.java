@@ -34,12 +34,11 @@ public class MsgUserCreate {
     public byte[] getMessage(){
         byte[] loginchars = new byte[64];
         byte[] passchars = new byte[64];
-        byte[] valors = new byte[132];
         
         loginchars = login.getBytes();
         passchars = pass.getBytes();
         
-        ByteBuffer buffer = ByteBuffer.wrap(valors);
+        ByteBuffer buffer = ByteBuffer.allocate(132);
         buffer.putInt(TIPUS_USER_CREATE);
         buffer.put(loginchars);
         buffer.position(68);
