@@ -72,6 +72,7 @@ public class AlkiriaClient {
                     menuCrearUsuari();
                 break;
                 case 2:
+                    menuLoginUsuari();
                 break;
                 case 3:
                     enviaMsgUDP();
@@ -110,6 +111,18 @@ public class AlkiriaClient {
         crearUsuari(login, password);
         //menu();
     }
+
+    private void menuLoginUsuari(){
+        Scanner lector = new Scanner(System.in);
+        
+        System.out.println("Introdeixi el Login: ");
+        String login = lector.nextLine();
+        System.out.println("Introdeixi el Password: ");
+        String password = lector.nextLine();
+        
+        loginUsuari(login, password);
+        //menu();
+    }
     
     private void crearUsuari(String login, String pass){
         MsgUser msguser = new MsgUser();
@@ -119,6 +132,14 @@ public class AlkiriaClient {
         sendMessage(msg);
     }
     
+    private void loginUsuari(String login, String pass){
+        MsgUser msguser = new MsgUser();
+        msguser.setLogin(login);
+        msguser.setPass(pass);
+        byte[] msg = msguser.getMessage(MsgUser.TIPUS_USER_LOGIN);
+        sendMessage(msg);
+    }
+
     public void sendMessage(byte[] msg){
         try {
             System.out.println(msg);
@@ -130,7 +151,7 @@ public class AlkiriaClient {
             out.flush();
             in = new BufferedReader(new InputStreamReader(client.getInputStream()));
             String dades = in.readLine();
-            System.out.println("Token: " + dades);
+            System.out.println("Resposta: " + dades);
         } catch (UnknownHostException ex) {
             Logger.getLogger(AlkiriaClient.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {

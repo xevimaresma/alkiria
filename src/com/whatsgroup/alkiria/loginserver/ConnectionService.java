@@ -99,6 +99,37 @@ public class ConnectionService implements Runnable{
             out.flush();
             //User user = new User(new String(arrlogin,"UTF-8"), null, null, null);
             //db.save(user);
+        }else if(tipus == 2){
+            //Crear usuari
+            //System.out.println(buffer.asCharBuffer());
+            byte[] arrlogin = new byte[64];
+            buffer.get(arrlogin);
+            System.out.println("Len Buffer2: " + buffer.capacity());
+            byte[] arrpass = new byte[64];
+            buffer.get(arrpass);
+            String login = new String(arrlogin,"UTF-8").trim();
+            String pass = new String(arrpass,"UTF-8").trim();
+            //Comprobem si l'usuari ja existeix
+            User user = new User();
+            user.setMail(login);
+            user.setPass(pass);
+            BasicDBObject resultat = (BasicDBObject)db.find(user);
+            User resp = new User();
+            if(resultat==null){
+                System.out.println("Error Login");
+                out.write("LOGIN ERROR");
+                out.flush();
+            }else{
+                resp.loadFromDBObject((BasicDBObject)db.find(user));
+                System.out.println(resp);
+                System.out.println("Usuari Existent");
+                System.out.println(resp.getToken());
+                out.write(resp.getToken());
+                out.flush();
+            }
+            //User user = new User(new String(arrlogin,"UTF-8"), null, null, null);
+            //db.save(user);
+            
         }
         
     }
