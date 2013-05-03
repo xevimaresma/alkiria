@@ -4,7 +4,8 @@
  */
 package com.whatsgroup.alkiria.messageserver;
 
-import com.whatsgroup.alkiria.entities.Encryption;
+import com.whatsgroup.alkiria.db.DataBase;
+import com.whatsgroup.alkiria.entities.*;
 import java.io.*;
 import java.net.*;
 import java.nio.ByteBuffer;
@@ -44,15 +45,25 @@ public class AlkiriaMessageServer {
                 buffer.get(arrdesti);
                 byte[] arrmsg = new byte[64];
                 buffer.get(arrmsg);
-                prova=new String(arrtoken);
-                System.out.println("Token: " + prova);
-                prova=new String(arrdesti);
-                System.out.println("Destí: " + prova);
-                prova=new String(arrmsg);
-                System.out.println("Missatge: " + prova);
+                String token=new String(arrtoken);
+                System.out.println("Token: " + token);
+                String desti=new String(arrdesti);
+                System.out.println("Destí: " + desti);
+                String remitent=new String(arrmsg);
+                System.out.println("Missatge: " + remitent);
                 encripta.decrypt(arrmsg);            
                 System.out.println("Missatge desencriptat: " + encripta.getMsgDesencriptat());                
                 resposta="OK";
+                
+                // Guardem el missatge
+                DataBase db=new DataBase();                
+                Message missatge=new Message();
+                missatge.setRemitent(remitent);
+                missatge.setDestinatari(desti);
+                missatge.setMissatge(encripta.getMsgDesencriptat());
+                missatge.setHoraEnviament((int)System.currentTimeMillis());
+                db.save(missatge);                                
+                
             } 
             byte[] valors = new byte[68];
             ByteBuffer bufferSend = ByteBuffer.wrap(valors);

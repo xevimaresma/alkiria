@@ -18,7 +18,7 @@ public class Message extends AlkiriaDataBaseObject{
     private String destinatari;
     private String missatge;
     private int horaEnviament;
-    private int horaLliurament;    
+    private int horaLliurament;        
 
     public Message(){
     
@@ -35,7 +35,7 @@ public class Message extends AlkiriaDataBaseObject{
     public String getDestinatari() {
         return destinatari;
     }
-    public void getDestinatari(String destinatari) {
+    public void setDestinatari(String destinatari) {
         this.destinatari=destinatari;
         put("destinatari",destinatari);
     }
@@ -69,8 +69,7 @@ public class Message extends AlkiriaDataBaseObject{
         this.destinatari=obj.getString("destinatari");
         this.missatge=obj.getString("missatge");        
         this.horaLliurament = obj.getInt("horaLliurament");
-        this.horaEnviament = obj.getInt("horaEnviament");        
-        
+        this.horaEnviament = obj.getInt("horaEnviament");                
     }
 
     @Override
