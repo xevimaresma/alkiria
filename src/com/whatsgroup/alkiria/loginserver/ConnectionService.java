@@ -17,6 +17,7 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.bson.types.ObjectId;
 
 /**
  *
@@ -73,30 +74,27 @@ public class ConnectionService implements Runnable{
             buffer.get(arrpass);
             String login = new String(arrlogin,"UTF-8").trim();
             String pass = new String(arrpass,"UTF-8").trim();
-            //System.out.println("Login: " + login);
-            //System.out.println("Pass: " + pass);
-            
             //Comprobem si l'usuari ja existeix
-            
-            //User user = new User(login, null, null, null);
             User user = new User();
             user.setMail(login);
-            //db.save(user);
             BasicDBObject resultat = (BasicDBObject)db.find(user);
+            User resp = new User();
             if(resultat==null){
                 //Creem l'usuari a la BD
-                user.setPass(pass);
-                db.save(user);
+                resp.setMail(login);
+                resp.setPass(pass);
+                db.save(resp);
                 System.out.println(user);
                 System.out.println("Usuari Creat OK");
             }else{
-                User resp = new User();
                 resp.loadFromDBObject((BasicDBObject)db.find(user));
                 System.out.println(resp);
                 System.out.println("Usuari Existent");
             }
 
-            
+            //Gestionar respostes
+            out.write(resp.getToken());
+            out.flush();
             //User user = new User(new String(arrlogin,"UTF-8"), null, null, null);
             //db.save(user);
         }

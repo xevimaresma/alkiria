@@ -24,7 +24,9 @@ public class User extends AlkiriaDataBaseObject{
     }
     
     public String getToken() {
-        return token;
+        if(this.token == "")
+            this.token = getString("_id");
+        return this.token;
     }
 
     public void setToken(String token) {
@@ -69,9 +71,9 @@ public class User extends AlkiriaDataBaseObject{
     }
     
     public void loadFromDBObject(BasicDBObject obj){
+        this.token = obj.getString("_id");
         this.mail = obj.getString("mail");
         this.pass = obj.getString("pass");
-        this.token = obj.getString("token");
     }
 
     @Override
@@ -80,6 +82,6 @@ public class User extends AlkiriaDataBaseObject{
     }
     
     public String toString(){
-        return "User: " + this.mail + " Pass: " + this.pass;
+        return "User: " + this.mail + " Pass: " + this.pass + " Token: " +this.token;
     }
 }

@@ -6,7 +6,7 @@ package com.whatsgroup.alkiria.client;
 
 import com.whatsgroup.alkiria.loginserver.AlkiriaLoginServer;
 import com.whatsgroup.alkiria.messages.MsgSender;
-import com.whatsgroup.alkiria.messages.MsgUserCreate;
+import com.whatsgroup.alkiria.messages.MsgUser;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -112,27 +112,11 @@ public class AlkiriaClient {
     }
     
     private void crearUsuari(String login, String pass){
-/*
- * 
-
-Client-Servidor
-4 Bytes [INT - 1 = Alta]
-64 Bytes [STRING - md5(password)]
-64 Bytes [STRING - mail] -no n'he vist de gaire més llargues-
-1 Bytes [Char - | = Fi de missatge]
-
-Servidor - Client
-4 Bytes [INT - 1 = Login]
-64 Bytes [STRING - token o bé un null o cadena buida si error? O fem Error: XXX on XXX sigui un codi per mostrar des de l'app? Usuari ocupat, mail ja registrat...?]
-1 Bytes [Char - | = Fi de missatge]
-
-*/        
-        MsgUserCreate msguser = new MsgUserCreate();
+        MsgUser msguser = new MsgUser();
         msguser.setLogin(login);
         msguser.setPass(pass);
-        byte[] msg = msguser.getMessage();
+        byte[] msg = msguser.getMessage(MsgUser.TIPUS_USER_CREATE);
         sendMessage(msg);
-        
     }
     
     public void sendMessage(byte[] msg){
@@ -144,6 +128,8 @@ Servidor - Client
             out.writeInt(msg.length);
             out.write(msg);
             out.flush();
+            String dades = in.readLine();
+            System.out.println("Token: " + dades);
         } catch (UnknownHostException ex) {
             Logger.getLogger(AlkiriaClient.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
