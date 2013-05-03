@@ -63,7 +63,5 @@ public class MsgSender {
         buffer.put(sendData);
         
         return buffer.array();
-        //System.out.println(new String(buffer));       
-        
     }
 }
