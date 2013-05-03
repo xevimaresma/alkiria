@@ -16,6 +16,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -89,7 +91,8 @@ public class AlkiriaClient {
         MsgSender missatge=new MsgSender(msg);
         try {
             missatge.setClau("prova");
-            missatge.enviaMsg();
+            byte[] msgara = missatge.enviaMsg();
+            sendMessageUDP(msgara);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -155,6 +158,27 @@ Servidor - Client
             
         }
         
+    }
+    
+     public void sendMessageUDP(byte[] msg){
+        try {
+            int port=9876;
+            System.out.println(new String(msg));
+            byte[] sendData = new byte[196];
+            byte[] receiveData = new byte[1024]; 
+            BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
+            DatagramSocket clientSocket = new DatagramSocket();
+            InetAddress IPAddress = InetAddress.getByName("localhost");
+            DatagramPacket sendPacket = new DatagramPacket(msg, msg.length, IPAddress, port);
+            clientSocket.send(sendPacket);
+            DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+            clientSocket.receive(receivePacket);
+            String modifiedSentence = new String(receivePacket.getData());
+            System.out.println("FROM SERVER:" + modifiedSentence);
+            clientSocket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     
     

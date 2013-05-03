@@ -7,14 +7,18 @@ package com.whatsgroup.alkiria.messages;
 import com.whatsgroup.alkiria.entities.Encryption;
 import java.io.*;
 import java.net.*;
+import java.nio.ByteBuffer;
 
 /**
  *
  * @author PC
  */
 public class MsgSender {
+    public static final int TIPUS_ENVIA_MSG = 2;
     private String missatge;    
-    private String clauEncriptacio;
+    private String clauEncriptacio;    
+    private String mailDesti;
+    
     private int port=9876;
     
     public MsgSender(String missatgeRep) {
@@ -38,23 +42,28 @@ public class MsgSender {
         this.clauEncriptacio=clauEncripta;
     }
     
-    public void enviaMsg() throws Exception {        
+    public byte[] enviaMsg() throws Exception {        
         Encryption encripta=new Encryption();
         encripta.setClau(this.clauEncriptacio);
         encripta.encrypt(this.missatge);        
-        BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
-        DatagramSocket clientSocket = new DatagramSocket();
-        InetAddress IPAddress = InetAddress.getByName("localhost");
-        byte[] sendData = new byte[1024];
+        
+        byte[] sendData = new byte[64];
         byte[] receiveData = new byte[1024];   
         sendData=encripta.getMsgEncriptat();
-        System.out.println(new String(sendData));       
-        DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
-        clientSocket.send(sendPacket);
-        DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-        clientSocket.receive(receivePacket);
-        String modifiedSentence = new String(receivePacket.getData());
-        System.out.println("FROM SERVER:" + modifiedSentence);
-        clientSocket.close();
+        
+        byte[] valors = new byte[196];
+        String token="1234";
+        String destinatari="girona@gmail.com";
+        ByteBuffer buffer = ByteBuffer.wrap(valors);
+        buffer.putInt(TIPUS_ENVIA_MSG);        
+        buffer.put(token.getBytes());
+        buffer.position(68);
+        buffer.put(destinatari.getBytes());
+        buffer.position(132);
+        buffer.put(sendData);
+        
+        return buffer.array();
+        //System.out.println(new String(buffer));       
+        
     }
 }
