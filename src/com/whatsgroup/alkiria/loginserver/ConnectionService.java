@@ -84,6 +84,7 @@ public class ConnectionService implements Runnable{
                 resp.setMail(login);
                 resp.setPass(pass);
                 db.save(resp);
+                resp.loadFromDBObject((BasicDBObject)db.find(resp));
                 System.out.println(user);
                 System.out.println("Usuari Creat OK");
             }else{
