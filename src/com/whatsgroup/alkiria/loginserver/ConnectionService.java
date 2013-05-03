@@ -93,6 +93,7 @@ public class ConnectionService implements Runnable{
             }
 
             //Gestionar respostes
+            System.out.println(resp.getToken());
             out.write(resp.getToken());
             out.flush();
             //User user = new User(new String(arrlogin,"UTF-8"), null, null, null);

@@ -128,6 +128,7 @@ public class AlkiriaClient {
             out.writeInt(msg.length);
             out.write(msg);
             out.flush();
+            in = new BufferedReader(new InputStreamReader(client.getInputStream()));
             String dades = in.readLine();
             System.out.println("Token: " + dades);
         } catch (UnknownHostException ex) {
