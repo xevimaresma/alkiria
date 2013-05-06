@@ -89,6 +89,28 @@ public class Encryption {
         // .encode(cipherText);
         this.msgEncriptat=cipherText;        
     }
+    
+    public void encryptByte(byte[] message) throws Exception {          
+        final MessageDigest md = MessageDigest.getInstance("md5");
+        System.out.println(clauEncriptacio);
+        final byte[] digestOfPassword = md.digest(clauEncriptacio.getBytes("utf-8"));
+        final byte[] keyBytes = Arrays.copyOf(digestOfPassword, 24);
+        for (int j = 0, k = 16; j < 8;) {
+                keyBytes[k++] = keyBytes[j++];
+        }
+
+        DESedeKeySpec keySpec = new DESedeKeySpec(keyBytes);
+        SecretKeyFactory factory = SecretKeyFactory.getInstance("DESede");
+        SecretKey key = factory.generateSecret(keySpec);
+
+        final Cipher cipher = Cipher.getInstance("DESede");
+        cipher.init(Cipher.ENCRYPT_MODE, key);
+        
+        final byte[] cipherText = cipher.doFinal(message);
+        // final String encodedCipherText = new sun.misc.BASE64Encoder()
+        // .encode(cipherText);
+        this.msgEncriptat=cipherText;        
+    }
 
     public void decrypt(byte[] message) throws Exception {    	
         final MessageDigest md = MessageDigest.getInstance("md5");
