@@ -4,7 +4,10 @@
  */
 package com.whatsgroup.alkiria.messages;
 
+import com.whatsgroup.alkiria.entities.Encryption;
 import java.nio.ByteBuffer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -46,8 +49,15 @@ public class MsgUser {
         buffer.put(passchars);
         //buffer.put(loginchars);
         //buffer.put(passchars);
-
-        return buffer.array();
+        Encryption encrypt = new Encryption();
+        encrypt.setClau(Encryption.CLAU);
+        try {
+            encrypt.encrypt(buffer.array());
+            return encrypt.getMsgEncriptat();
+        } catch (Exception ex) {
+            Logger.getLogger(MsgUser.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
     
 }

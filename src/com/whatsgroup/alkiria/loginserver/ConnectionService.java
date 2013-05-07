@@ -6,7 +6,9 @@ package com.whatsgroup.alkiria.loginserver;
 
 import com.mongodb.BasicDBObject;
 import com.whatsgroup.alkiria.db.DataBase;
+import com.whatsgroup.alkiria.entities.Encryption;
 import com.whatsgroup.alkiria.entities.User;
+import com.whatsgroup.alkiria.messages.MsgUser;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
@@ -60,6 +62,14 @@ public class ConnectionService implements Runnable{
         System.out.println("Len: " + len);
         byte[] data = new byte[len];
         in.readFully(data);
+        Encryption encrypt = new Encryption();
+        encrypt.setClau(Encryption.CLAU);
+        try {
+            data = encrypt.decryptBytes(data);
+        } catch (Exception ex) {
+            Logger.getLogger(MsgUser.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         System.out.println("Len data: " + data.length);
         ByteBuffer buffer = ByteBuffer.wrap(data);
         System.out.println("Len Buffer: " + buffer.capacity());

@@ -33,6 +33,7 @@ import javax.crypto.spec.SecretKeySpec;
 */
 public class Encryption {
     
+    public static final String CLAU = "Hola";
     private String clauEncriptacio="",msgDesencriptat="";
     private byte[] msgEncriptat;
     
@@ -90,7 +91,7 @@ public class Encryption {
         this.msgEncriptat=cipherText;        
     }
     
-    public void encryptByte(byte[] message) throws Exception {          
+    public void encrypt(byte[] message) throws Exception {          
         final MessageDigest md = MessageDigest.getInstance("md5");
         System.out.println(clauEncriptacio);
         final byte[] digestOfPassword = md.digest(clauEncriptacio.getBytes("utf-8"));
@@ -137,4 +138,31 @@ public class Encryption {
     	final byte[] plainText = decipher.doFinal(message);
         this.msgDesencriptat=new String(plainText, "UTF-8");    	
     }
+    
+    public byte[] decryptBytes(byte[] message) throws Exception {    	
+        final MessageDigest md = MessageDigest.getInstance("md5");
+        
+    	final byte[] digestOfPassword = md.digest(clauEncriptacio.getBytes("utf-8"));
+    	final byte[] keyBytes = Arrays.copyOf(digestOfPassword, 24);
+    	for (int j = 0, k = 16; j < 8;) {
+    		keyBytes[k++] = keyBytes[j++];
+    	}
+        
+    	/*final SecretKey key = new SecretKeySpec(keyBytes, "DESede");
+    	final IvParameterSpec iv = new IvParameterSpec(new byte[8]);
+    	final Cipher decipher = Cipher.getInstance("DESede/CBC/PKCS5Padding");
+    	decipher.init(Cipher.DECRYPT_MODE, key, iv);*/
+        DESedeKeySpec keySpec = new DESedeKeySpec(keyBytes);
+        SecretKeyFactory factory = SecretKeyFactory.getInstance("DESede");
+        SecretKey key = factory.generateSecret(keySpec);
+        final Cipher decipher = Cipher.getInstance("DESede/ECB/NoPadding");
+        decipher.init(Cipher.DECRYPT_MODE, key);
+    	// final byte[] encData = new
+    	// sun.misc.BASE64Decoder().decodeBuffer(message);
+        //System.out.println("---->"+message);        
+        
+    	return decipher.doFinal(message);
+        //this.msgDesencriptat=new String(plainText, "UTF-8");    	
+    }
+    
 }
