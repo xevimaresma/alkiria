@@ -70,4 +70,9 @@ public class DataBase {
         return tbl.findOne(object);
     }
     
+    public DBCursor findAll(AlkiriaDataBaseObject object){
+        DBCollection tbl = db.getCollection(object.getTableName());
+        return tbl.find(object);
+    }
+    
 }
