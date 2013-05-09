@@ -15,6 +15,8 @@ import java.nio.ByteBuffer;
  */
 public class MsgSender {
     public static final int TIPUS_ENVIA_MSG = 2;
+    public static final int TIPUS_DEMANA_MSG = 3;
+    public static final int TIPUS_LLIURA_MSG = 4;
     private String missatge;    
     private String clauEncriptacio;    
     private String mailDesti;
@@ -43,19 +45,23 @@ public class MsgSender {
     }
     
     public byte[] enviaMsg() throws Exception {        
+        String token="518bd9ed53f1b46ca694ddb5";
+        String destinatari="prova";
+        int tipusMissatge=TIPUS_ENVIA_MSG;
+        return enviaMsg(token,destinatari,tipusMissatge);
+    }
+    
+    public byte[] enviaMsg(String token, String destinatari, int tipusMissatge) throws Exception {        
         Encryption encripta=new Encryption();
         encripta.setClau(this.clauEncriptacio);
         encripta.encrypt(this.missatge);        
         
-        byte[] sendData = new byte[64];
-        byte[] receiveData = new byte[1024];   
+        byte[] sendData = new byte[64];        
         sendData=encripta.getMsgEncriptat();
         
-        byte[] valors = new byte[196];
-        String token="1234";
-        String destinatari="girona@gmail.com";
+        byte[] valors = new byte[196];        
         ByteBuffer buffer = ByteBuffer.wrap(valors);
-        buffer.putInt(TIPUS_ENVIA_MSG);        
+        buffer.putInt(tipusMissatge);        
         buffer.put(token.getBytes());
         buffer.position(68);
         buffer.put(destinatari.getBytes());
@@ -64,4 +70,26 @@ public class MsgSender {
         
         return buffer.array();
     }
+    
+    public void enviamentUDP(byte[] msg){
+        try {            
+            System.out.println(new String(msg));
+            byte[] sendData = new byte[196];
+            byte[] receiveData = new byte[1024]; 
+            BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
+            DatagramSocket clientSocket = new DatagramSocket();
+            InetAddress IPAddress = InetAddress.getByName("localhost");
+            DatagramPacket sendPacket = new DatagramPacket(msg, msg.length, IPAddress, port);
+            clientSocket.send(sendPacket);
+            DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+            clientSocket.receive(receivePacket);
+            String modifiedSentence = new String(receivePacket.getData());
+            System.out.println("FROM CLIENT:" + modifiedSentence);
+            clientSocket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    
 }

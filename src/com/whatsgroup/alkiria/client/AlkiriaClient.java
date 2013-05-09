@@ -56,6 +56,7 @@ public class AlkiriaClient {
         System.out.println("1. Crear Usuaris");
         System.out.println("2. Obtenir Token");
         System.out.println("3. Enviar missatge");
+        System.out.println("4. Sol·licitar missatges");
         System.out.println("0. Sortir");
         
         Scanner lector = new Scanner(System.in);
@@ -77,6 +78,9 @@ public class AlkiriaClient {
                 case 3:
                     enviaMsgUDP();
                 break;
+                case 4:
+                    refrescaMsgUDP();
+                break;                    
                 default:
                     System.out.println("Ha d'introduir una opció del menú.");
                     System.out.println("");
@@ -93,6 +97,20 @@ public class AlkiriaClient {
         try {
             missatge.setClau("prova");
             byte[] msgara = missatge.enviaMsg();
+            sendMessageUDP(msgara);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+    }
+    
+    private void refrescaMsgUDP()  {
+        Scanner lector = new Scanner(System.in);
+                
+        MsgSender missatge=new MsgSender("");
+        try {
+            missatge.setClau("prova");
+            byte[] msgara = missatge.enviaMsg("","",3);
             sendMessageUDP(msgara);
         } catch (Exception e) {
             e.printStackTrace();
