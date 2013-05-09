@@ -59,7 +59,7 @@ public class AlkiriaMessageServer {
                 User user = new User();
                 user.setToken(token);
                 System.out.println("Buscant "+token+" -- "+user.toString());                
-                BasicDBObject resultat = (BasicDBObject)db.find(user);                                
+                BasicDBObject resultat = (BasicDBObject)db.findById(user,token.trim());                                                
                 if(resultat==null){
                     System.out.println("Error Login");
                     // Preparar missatge d'error
@@ -72,7 +72,7 @@ public class AlkiriaMessageServer {
                     serverSocket.send(sendPacket);
                 }else{
                     User usuariRemitent=new User();
-                    usuariRemitent.loadFromDBObject((BasicDBObject)db.find(user));
+                    usuariRemitent.loadFromDBObject(resultat);
                     System.out.println(usuariRemitent);
                     System.out.println("Usuari Existent");
                     System.out.println(usuariRemitent.getToken());

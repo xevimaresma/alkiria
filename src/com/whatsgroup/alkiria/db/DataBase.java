@@ -17,6 +17,7 @@ import java.net.UnknownHostException;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.bson.types.ObjectId;
 
 /**
  *
@@ -68,6 +69,13 @@ public class DataBase {
     public DBObject find(AlkiriaDataBaseObject object){
         DBCollection tbl = db.getCollection(object.getTableName());
         return tbl.findOne(object);
+    }
+    
+    public DBObject findById(AlkiriaDataBaseObject object, String idString){        
+        DBCollection tbl = db.getCollection(object.getTableName());
+        System.out.println(idString+"!!!");
+        DBObject searchById = new BasicDBObject("_id", new ObjectId(idString));        
+        return tbl.findOne(searchById);
     }
     
     public DBCursor findAll(AlkiriaDataBaseObject object){
