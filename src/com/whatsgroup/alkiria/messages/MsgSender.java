@@ -17,7 +17,7 @@ public class MsgSender {
     public static final int TIPUS_ENVIA_MSG = 2;
     public static final int TIPUS_DEMANA_MSG = 3;
     public static final int TIPUS_LLIURA_MSG = 4;
-    private String missatge;    
+    private String missatge;   
     private String clauEncriptacio;    
     private String mailDesti;
     
@@ -45,19 +45,21 @@ public class MsgSender {
     }
     
     public byte[] enviaMsg() throws Exception {        
-        String token="518bd9ed53f1b46ca694ddb5";
+        //String token="518bd9ed53f1b46ca694ddb5";
+        String token="515dd85856861ee247ccf15a";
         String destinatari="prova";
         int tipusMissatge=TIPUS_ENVIA_MSG;
         return enviaMsg(token,destinatari,tipusMissatge);
     }
     
-    public byte[] enviaMsg(String token, String destinatari, int tipusMissatge) throws Exception {        
+    public byte[] enviaMsg(String token, String destinatari, int tipusMissatge) throws Exception {                        
+        byte[] sendData = new byte[64];  
+                
         Encryption encripta=new Encryption();
         encripta.setClau(this.clauEncriptacio);
         encripta.encrypt(this.missatge);        
-        
-        byte[] sendData = new byte[64];        
         sendData=encripta.getMsgEncriptat();
+        System.out.println(encripta.getMsgDesencriptat()+" - "+sendData.length);        
         
         byte[] valors = new byte[196];        
         ByteBuffer buffer = ByteBuffer.wrap(valors);

@@ -70,7 +70,7 @@ public class Encryption {
     
     public void encrypt(String message) throws Exception {          
         final MessageDigest md = MessageDigest.getInstance("md5");
-        System.out.println(clauEncriptacio);
+        //System.out.println(clauEncriptacio;
         final byte[] digestOfPassword = md.digest(clauEncriptacio.getBytes("utf-8"));
         final byte[] keyBytes = Arrays.copyOf(digestOfPassword, 24);
         for (int j = 0, k = 16; j < 8;) {
@@ -135,8 +135,9 @@ public class Encryption {
     	// sun.misc.BASE64Decoder().decodeBuffer(message);
         //System.out.println("---->"+message);        
         
-    	final byte[] plainText = decipher.doFinal(message);
+    	final byte[] plainText = decipher.doFinal(message);        
         this.msgDesencriptat=new String(plainText, "UTF-8");    	
+        System.out.println(this.clauEncriptacio+" i "+this.msgDesencriptat);
     }
     
     public byte[] decryptBytes(byte[] message) throws Exception {    	

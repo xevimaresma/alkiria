@@ -67,8 +67,10 @@ public class Message extends AlkiriaDataBaseObject{
     public void loadFromDBObject(BasicDBObject obj){
         this.remitent=obj.getString("remitent");
         this.destinatari=obj.getString("destinatari");
-        this.missatge=obj.getString("missatge");        
-        this.horaLliurament = obj.getInt("horaLliurament");
+        this.missatge=obj.getString("missatge");
+        if (obj.containsField("horaLliurament")) {
+            this.horaLliurament = obj.getInt("horaLliurament");
+        } else { this.horaLliurament=0; }
         this.horaEnviament = obj.getInt("horaEnviament");                
     }
 

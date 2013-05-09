@@ -36,6 +36,7 @@ public class AlkiriaClient {
     private BufferedReader in = null;
     private DataOutputStream out = null;
     private Socket client = null;
+    public String token;
     
     /**
      * @param args the command line arguments
@@ -95,7 +96,7 @@ public class AlkiriaClient {
         String msg = lector.nextLine();
         MsgSender missatge=new MsgSender(msg);
         try {
-            missatge.setClau("prova");
+            missatge.setClau(this.token);
             byte[] msgara = missatge.enviaMsg();
             sendMessageUDP(msgara);
         } catch (Exception e) {
@@ -109,8 +110,8 @@ public class AlkiriaClient {
                 
         MsgSender missatge=new MsgSender("");
         try {
-            missatge.setClau("prova");
-            byte[] msgara = missatge.enviaMsg("","",3);
+            missatge.setClau(this.token);
+            byte[] msgara = missatge.enviaMsg(this.token,"",3);
             sendMessageUDP(msgara);
         } catch (Exception e) {
             e.printStackTrace();
@@ -169,6 +170,10 @@ public class AlkiriaClient {
             out.flush();
             in = new BufferedReader(new InputStreamReader(client.getInputStream()));
             String dades = in.readLine();
+            if (dades.trim()!="LOGIN ERROR") {
+                this.token=dades;
+                System.out.println("Nou token"+this.token);
+            }
             System.out.println("Resposta: " + dades);
         } catch (UnknownHostException ex) {
             Logger.getLogger(AlkiriaClient.class.getName()).log(Level.SEVERE, null, ex);
