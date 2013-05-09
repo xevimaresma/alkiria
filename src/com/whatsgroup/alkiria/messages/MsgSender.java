@@ -54,12 +54,11 @@ public class MsgSender {
     
     public byte[] enviaMsg(String token, String destinatari, int tipusMissatge) throws Exception {                        
         byte[] sendData = new byte[64];  
-                
+                        
         Encryption encripta=new Encryption();
         encripta.setClau(this.clauEncriptacio);
-        encripta.encrypt(this.missatge);        
-        sendData=encripta.getMsgEncriptat();
-        System.out.println(encripta.getMsgDesencriptat()+" - "+sendData.length);        
+        encripta.encrypt(this.missatge.trim());                
+        sendData=encripta.getMsgEncriptat();        
         
         byte[] valors = new byte[196];        
         ByteBuffer buffer = ByteBuffer.wrap(valors);
@@ -83,10 +82,6 @@ public class MsgSender {
             InetAddress IPAddress = InetAddress.getByName("localhost");
             DatagramPacket sendPacket = new DatagramPacket(msg, msg.length, IPAddress, port);
             clientSocket.send(sendPacket);
-            DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-            clientSocket.receive(receivePacket);
-            String modifiedSentence = new String(receivePacket.getData());
-            System.out.println("FROM CLIENT:" + modifiedSentence);
             clientSocket.close();
         } catch (Exception e) {
             e.printStackTrace();

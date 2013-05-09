@@ -116,7 +116,7 @@ public class Encryption {
     public void decrypt(byte[] message) throws Exception {    	
         final MessageDigest md = MessageDigest.getInstance("md5");
         
-    	final byte[] digestOfPassword = md.digest(clauEncriptacio.getBytes("utf-8"));
+    	final byte[] digestOfPassword = md.digest(clauEncriptacio.getBytes("UTF-8"));
     	final byte[] keyBytes = Arrays.copyOf(digestOfPassword, 24);
     	for (int j = 0, k = 16; j < 8;) {
     		keyBytes[k++] = keyBytes[j++];
@@ -136,7 +136,8 @@ public class Encryption {
         //System.out.println("---->"+message);        
         
     	final byte[] plainText = decipher.doFinal(message);        
-        this.msgDesencriptat=new String(plainText, "UTF-8");    	
+        //this.msgDesencriptat=new String(plainText, "UTF-8");    	
+        this.msgDesencriptat=new String(plainText);    	
         System.out.println(this.clauEncriptacio+" i "+this.msgDesencriptat);
     }
     

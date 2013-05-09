@@ -48,7 +48,7 @@ public class AlkiriaMessageServer {
                 byte[] arrdesti = new byte[64];
                 buffer.get(arrdesti);
                 byte[] arrmsg = new byte[64];
-                buffer.get(arrmsg);
+                buffer.get(arrmsg);                
                 String token=new String(arrtoken).trim();                
                 encripta.setClau(token);
                 System.out.println("Token: " + token);
@@ -83,7 +83,7 @@ public class AlkiriaMessageServer {
                     Message missatge=new Message();
                     missatge.setRemitent(remitent);
                     missatge.setDestinatari(desti);
-                    missatge.setMissatge(encripta.getMsgDesencriptat());
+                    missatge.setMissatge(encripta.getMsgDesencriptat().trim());
                     missatge.setHoraEnviament((int)System.currentTimeMillis());
                     missatge.setHoraLliurament(0);
                     db.save(missatge);     
