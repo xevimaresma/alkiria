@@ -78,17 +78,13 @@ public class DataBase {
     }
     
     public DBCursor findAll(AlkiriaDataBaseObject object){
-        DBCollection tbl = db.getCollection(object.getTableName());
-        System.out.println(object.toString());
+        DBCollection tbl = db.getCollection(object.getTableName());        
         return tbl.find(object);
     }
     
     public DBCursor findMessages(String destinatari) {
-        DBCollection tbl = db.getCollection("messages");
-        BasicDBObject allQuery = new BasicDBObject();
-	BasicDBObject fields = new BasicDBObject();	
- 
-	DBCursor cursor = tbl.find(allQuery, fields);
+        DBCollection tbl = db.getCollection("messages");        
+        DBCursor cursor = tbl.find(new BasicDBObject().append("destinatari",destinatari.trim()));	
 	return cursor;
     }
     

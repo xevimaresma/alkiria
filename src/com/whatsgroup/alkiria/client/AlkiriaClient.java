@@ -92,12 +92,13 @@ public class AlkiriaClient {
     private void enviaMsgUDP()  {
         Scanner lector = new Scanner(System.in);
         
+        System.out.println("Escriu el destinatari: ");
+        String destinatari = lector.nextLine();
         System.out.println("Escriu el missatge: ");
         String msg = lector.nextLine();
-        MsgSender missatge=new MsgSender(msg);
-        try {
-            missatge.setClau(this.token);
-            byte[] msgara = missatge.enviaMsg();
+        MsgSender missatge=new MsgSender(msg,this.token);        
+        try {            
+            byte[] msgara = missatge.enviaMsg(this.token,destinatari,2);
             sendMessageUDP(msgara);
         } catch (Exception e) {
             e.printStackTrace();

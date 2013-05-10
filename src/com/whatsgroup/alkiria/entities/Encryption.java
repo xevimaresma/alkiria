@@ -36,20 +36,8 @@ public class Encryption {
     public static final String CLAU = "Hola";
     private String clauEncriptacio="",msgDesencriptat="";
     private byte[] msgEncriptat;
-    
-    public static void main(String[] args) throws Exception {
-    	String text = "Prova";
-        Encryption encripta=new Encryption();
-        encripta.setClau("Hola");
-        encripta.encrypt(text);
-        encripta.decrypt(encripta.getMsgEncriptat());
-        System.out.println(encripta.getMsgEncriptat());
-        System.out.println(encripta.getMsgDesencriptat());
-    	System.out.println("-----");
-    }
-    
-    public Encryption () {
         
+    public Encryption () {        
     }
     
     public Encryption(String clau) {
@@ -70,24 +58,21 @@ public class Encryption {
     
     public void encrypt(String message) throws Exception {          
         final MessageDigest md = MessageDigest.getInstance("md5");
-        //System.out.println(clauEncriptacio;
         final byte[] digestOfPassword = md.digest(clauEncriptacio.getBytes("utf-8"));
         final byte[] keyBytes = Arrays.copyOf(digestOfPassword, 24);
         for (int j = 0, k = 16; j < 8;) {
                 keyBytes[k++] = keyBytes[j++];
         }
-
         DESedeKeySpec keySpec = new DESedeKeySpec(keyBytes);
         SecretKeyFactory factory = SecretKeyFactory.getInstance("DESede");
         SecretKey key = factory.generateSecret(keySpec);
-
         final Cipher cipher = Cipher.getInstance("DESede");
         cipher.init(Cipher.ENCRYPT_MODE, key);
-
+        
+        message+="||END||";
+        
         final byte[] plainTextBytes = message.getBytes();
         final byte[] cipherText = cipher.doFinal(plainTextBytes);
-        // final String encodedCipherText = new sun.misc.BASE64Encoder()
-        // .encode(cipherText);
         this.msgEncriptat=cipherText;        
     }
     
@@ -105,11 +90,8 @@ public class Encryption {
         SecretKey key = factory.generateSecret(keySpec);
 
         final Cipher cipher = Cipher.getInstance("DESede");
-        cipher.init(Cipher.ENCRYPT_MODE, key);
-        
+        cipher.init(Cipher.ENCRYPT_MODE, key);        
         final byte[] cipherText = cipher.doFinal(message);
-        // final String encodedCipherText = new sun.misc.BASE64Encoder()
-        // .encode(cipherText);
         this.msgEncriptat=cipherText;        
     }
 
@@ -120,51 +102,33 @@ public class Encryption {
     	final byte[] keyBytes = Arrays.copyOf(digestOfPassword, 24);
     	for (int j = 0, k = 16; j < 8;) {
     		keyBytes[k++] = keyBytes[j++];
-    	}
-        
-    	/*final SecretKey key = new SecretKeySpec(keyBytes, "DESede");
-    	final IvParameterSpec iv = new IvParameterSpec(new byte[8]);
-    	final Cipher decipher = Cipher.getInstance("DESede/CBC/PKCS5Padding");
-    	decipher.init(Cipher.DECRYPT_MODE, key, iv);*/
+    	}            	
         DESedeKeySpec keySpec = new DESedeKeySpec(keyBytes);
         SecretKeyFactory factory = SecretKeyFactory.getInstance("DESede");
         SecretKey key = factory.generateSecret(keySpec);
         final Cipher decipher = Cipher.getInstance("DESede/ECB/NoPadding");
-        decipher.init(Cipher.DECRYPT_MODE, key);
-    	// final byte[] encData = new
-    	// sun.misc.BASE64Decoder().decodeBuffer(message);
-        //System.out.println("---->"+message);        
-        
+        decipher.init(Cipher.DECRYPT_MODE, key);    	
     	final byte[] plainText = decipher.doFinal(message);        
-        //this.msgDesencriptat=new String(plainText, "UTF-8");    	
-        this.msgDesencriptat=new String(plainText);    	
+        this.msgDesencriptat=new String(plainText, "UTF-8");    	
         System.out.println(this.clauEncriptacio+" i "+this.msgDesencriptat);
     }
     
     public byte[] decryptBytes(byte[] message) throws Exception {    	
-        final MessageDigest md = MessageDigest.getInstance("md5");
-        
+        final MessageDigest md = MessageDigest.getInstance("md5");        
     	final byte[] digestOfPassword = md.digest(clauEncriptacio.getBytes("utf-8"));
     	final byte[] keyBytes = Arrays.copyOf(digestOfPassword, 24);
     	for (int j = 0, k = 16; j < 8;) {
     		keyBytes[k++] = keyBytes[j++];
-    	}
-        
-    	/*final SecretKey key = new SecretKeySpec(keyBytes, "DESede");
-    	final IvParameterSpec iv = new IvParameterSpec(new byte[8]);
-    	final Cipher decipher = Cipher.getInstance("DESede/CBC/PKCS5Padding");
-    	decipher.init(Cipher.DECRYPT_MODE, key, iv);*/
+    	}       
         DESedeKeySpec keySpec = new DESedeKeySpec(keyBytes);
         SecretKeyFactory factory = SecretKeyFactory.getInstance("DESede");
         SecretKey key = factory.generateSecret(keySpec);
         final Cipher decipher = Cipher.getInstance("DESede/ECB/NoPadding");
         decipher.init(Cipher.DECRYPT_MODE, key);
-    	// final byte[] encData = new
-    	// sun.misc.BASE64Decoder().decodeBuffer(message);
-        //System.out.println("---->"+message);        
-        
     	return decipher.doFinal(message);
-        //this.msgDesencriptat=new String(plainText, "UTF-8");    	
     }
+    public String toString(){
+        return "Clau: " + this.clauEncriptacio + " Missatge: " + this.msgDesencriptat ;
+    }    
     
 }

@@ -58,7 +58,7 @@ public class AlkiriaMessageServer {
                 System.out.println("Missatge: " + missatgeS);
                 DataBase db=new DataBase(); 
                 User user = new User();
-                user.setToken(token);                
+                user.setMail(token);                
                 BasicDBObject resultat = (BasicDBObject)db.findById(user,token.trim());                                                
                 if(resultat==null){
                     System.out.println("Error Login");
@@ -81,8 +81,8 @@ public class AlkiriaMessageServer {
 
                     // Guardem el missatge                               
                     Message missatge=new Message();
-                    missatge.setRemitent(remitent);
-                    missatge.setDestinatari(desti);
+                    missatge.setRemitent(remitent.trim());
+                    missatge.setDestinatari(desti.trim());
                     missatge.setMissatge(encripta.getMsgDesencriptat().trim());
                     missatge.setHoraEnviament((int)System.currentTimeMillis());
                     missatge.setHoraLliurament(0);
@@ -100,9 +100,9 @@ public class AlkiriaMessageServer {
                 // Rutina de lliurament de missatge (servidor - destinatari)
                 byte[] arrtoken = new byte[64];
                 buffer.get(arrtoken);
-                System.out.println(arrtoken);
+                //System.out.println(arrtoken);
                 String token=new String(arrtoken);
-                System.out.println(token);
+                //System.out.println(token);
                 DataBase db=new DataBase(); 
                 User user = new User();
                 token=token.trim();
@@ -137,7 +137,7 @@ public class AlkiriaMessageServer {
                         DatagramPacket sendPacket = new DatagramPacket(bufferSend.array(), bufferSend.array().length, IPAddress, port);
                         serverSocket.send(sendPacket); 
                     } else {                        
-                        while ( msgTrobats.hasNext() ) {                                   
+                        while ( msgTrobats.hasNext() ) {                              
                             BasicDBObject msgTemp=(BasicDBObject)msgTrobats.next();                            
                             Message msgTrobat = new Message();
                             resultat = (BasicDBObject)db.findById(msgTrobat,msgTemp.getString("_id"));
@@ -153,17 +153,19 @@ public class AlkiriaMessageServer {
                             MsgSender enviament = new MsgSender(msgTrobat.getMissatge(),encriptaAra);
                             byte[] enviamentMsg=enviament.enviaMsg(token,msgTrobat.getDestinatari(),3);
                             try {                                
-                                enviament.enviamentUDP(enviamentMsg);
+                                //enviament.enviamentUDP(enviamentMsg);
+                                DatagramPacket sendPacket = new DatagramPacket(enviamentMsg, enviamentMsg.length, IPAddress, port);
+                                serverSocket.send(sendPacket); 
                             } catch (Exception e) {
                                 e.printStackTrace();
-                            }                            
+                            }                                                        
                         }
                     }
                     
                 }
             }
 
-            
+           tipus=0; 
         }
     }
     
