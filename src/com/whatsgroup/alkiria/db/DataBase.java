@@ -84,7 +84,7 @@ public class DataBase {
     
     public DBCursor findMessages(String destinatari) {
         DBCollection tbl = db.getCollection("messages");        
-        DBCursor cursor = tbl.find(new BasicDBObject().append("destinatari",destinatari.trim()));	
+        DBCursor cursor = tbl.find(new BasicDBObject().append("destinatari",destinatari.trim()));	        
 	return cursor;
     }
     

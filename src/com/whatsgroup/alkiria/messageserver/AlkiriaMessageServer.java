@@ -126,6 +126,7 @@ public class AlkiriaMessageServer {
                     String cercaMail=usuariCerca.getMail(); 
                     Message msgsCerca=new Message();
                     msgsCerca.setDestinatari(cercaMail);
+                    Message msgTrobat=new Message();
                     //DBCursor msgTrobats = (DBCursor)db.findAll(msgsCerca);                                        
                     DBCursor msgTrobats = (DBCursor)db.findMessages(cercaMail);                                                            
                     if(!msgTrobats.hasNext()) {
@@ -136,10 +137,12 @@ public class AlkiriaMessageServer {
                         bufferSend.put(resposta.getBytes());
                         DatagramPacket sendPacket = new DatagramPacket(bufferSend.array(), bufferSend.array().length, IPAddress, port);
                         serverSocket.send(sendPacket); 
-                    } else {                        
-                        while ( msgTrobats.hasNext() ) {                              
-                            BasicDBObject msgTemp=(BasicDBObject)msgTrobats.next();                            
-                            Message msgTrobat = new Message();
+                    } else {      
+                        int i=0;
+                        while ( msgTrobats.hasNext() ) {                                                          
+                            i++;
+                            BasicDBObject msgTemp=(BasicDBObject)msgTrobats.next();   
+                            System.out.println("Iteració "+i+" i "+msgTrobats.hasNext());
                             resultat = (BasicDBObject)db.findById(msgTrobat,msgTemp.getString("_id"));
                             msgTrobat.loadFromDBObject(resultat); 
                             User usuariRemiteAra=new User();
@@ -151,15 +154,15 @@ public class AlkiriaMessageServer {
                             
                             System.out.println("A punt d'enviar "+msgTrobat.toString());
                             MsgSender enviament = new MsgSender(msgTrobat.getMissatge(),encriptaAra);
-                            byte[] enviamentMsg=enviament.enviaMsg(token,msgTrobat.getDestinatari(),3);
+                            byte[] enviamentMsg=enviament.enviaMsg(token,msgTrobat.getDestinatari(),msgTrobat.getRemitent(),3);
                             try {                                
                                 //enviament.enviamentUDP(enviamentMsg);
                                 DatagramPacket sendPacket = new DatagramPacket(enviamentMsg, enviamentMsg.length, IPAddress, port);
-                                serverSocket.send(sendPacket); 
+                                serverSocket.send(sendPacket);                                                                                                 
                             } catch (Exception e) {
-                                e.printStackTrace();
+                                e.printStackTrace();                                
                             }                                                        
-                        }
+                        }                        
                     }
                     
                 }

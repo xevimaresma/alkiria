@@ -52,11 +52,12 @@ public class MsgSender {
         //String token="518bd9ed53f1b46ca694ddb5";
         String token="515dd85856861ee247ccf15a";
         String destinatari="prova";
+        String remitent="xevimaresma@gmail.com";
         int tipusMissatge=TIPUS_ENVIA_MSG;
-        return enviaMsg(token,destinatari,tipusMissatge);
+        return enviaMsg(token,destinatari,remitent,tipusMissatge);
     }
     
-    public byte[] enviaMsg(String token, String destinatari, int tipusMissatge) throws Exception {                        
+    public byte[] enviaMsg(String token, String destinatari, String remitent, int tipusMissatge) throws Exception {                        
         byte[] sendData = new byte[64];          
                         
         Encryption encripta=new Encryption();
@@ -65,15 +66,28 @@ public class MsgSender {
         this.arreglaCadena();            
         System.out.println(encripta.toString());
         sendData=encripta.getMsgEncriptat();                
-        
-        byte[] valors = new byte[196];        
-        ByteBuffer buffer = ByteBuffer.wrap(valors);
-        buffer.putInt(tipusMissatge);        
-        buffer.put(token.getBytes());
-        buffer.position(68);
-        buffer.put(destinatari.getBytes());
-        buffer.position(132);
-        buffer.put(sendData);
+        ByteBuffer buffer;
+        if (tipusMissatge==3) {
+            byte[] valors = new byte[260];        
+            buffer = ByteBuffer.wrap(valors);
+            buffer.putInt(tipusMissatge);        
+            buffer.put(token.getBytes());
+            buffer.position(68);
+            buffer.put(destinatari.getBytes());
+            buffer.position(132);
+            buffer.put(remitent.getBytes());
+            buffer.position(196);
+            buffer.put(sendData);           
+        } else {
+            byte[] valors = new byte[196];        
+            buffer = ByteBuffer.wrap(valors);
+            buffer.putInt(tipusMissatge);        
+            buffer.put(token.getBytes());
+            buffer.position(68);
+            buffer.put(destinatari.getBytes());
+            buffer.position(132);
+            buffer.put(sendData);
+        }
         
         return buffer.array();
     }
