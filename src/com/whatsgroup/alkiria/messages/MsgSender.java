@@ -61,21 +61,24 @@ public class MsgSender {
         byte[] sendData = new byte[64];          
                         
         Encryption encripta=new Encryption();
-        encripta.setClau(this.clauEncriptacio);
+        //encripta.setClau(this.clauEncriptacio);
+        encripta.setClau(token);
         encripta.encrypt(this.missatge);
-        this.arreglaCadena();            
-        System.out.println(encripta.toString());
-        sendData=encripta.getMsgEncriptat();                
+        this.arreglaCadena();                    
+        sendData=encripta.getMsgEncriptat();     
+        //String prova=new String(sendData);
+        //System.out.println("Encriptat és "+prova);
+        //System.out.println("Token és "+this.clauEncriptacio);
         ByteBuffer buffer;
         if (tipusMissatge==3) {
             byte[] valors = new byte[260];        
             buffer = ByteBuffer.wrap(valors);
             buffer.putInt(tipusMissatge);        
-            buffer.put(token.getBytes());
+            buffer.put(token.trim().getBytes());
             buffer.position(68);
-            buffer.put(destinatari.getBytes());
+            buffer.put(destinatari.trim().getBytes());
             buffer.position(132);
-            buffer.put(remitent.getBytes());
+            buffer.put(remitent.trim().getBytes());
             buffer.position(196);
             buffer.put(sendData);           
         } else {
