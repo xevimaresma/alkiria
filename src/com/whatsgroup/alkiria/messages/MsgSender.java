@@ -14,6 +14,7 @@ import java.nio.ByteBuffer;
  * @author PC
  */
 public class MsgSender {
+    // Definim variables per tota la classe, amb les constants de tipus d'enviament i el port
     public static final int TIPUS_ENVIA_MSG = 2;
     public static final int TIPUS_DEMANA_MSG = 3;
     public static final int TIPUS_LLIURA_MSG = 4;
@@ -23,33 +24,39 @@ public class MsgSender {
     
     private int port=9876;
     
+    // Constructor només amb missatge
     public MsgSender(String missatgeRep) {
         this.missatge=missatgeRep;
         this.arreglaCadena();
     }
     
+    // Constructor amb missatge i clau d'encriptació
     public MsgSender(String missatgeRep, String clauEncripta) {
         this.missatge=missatgeRep;
         this.clauEncriptacio=clauEncripta;
         this.arreglaCadena();
     }
     
+    // Setter de Missatge
     public void setMissatge(String missatgeRep) {
         this.missatge=missatgeRep;
         this.arreglaCadena();
     }
     
+    // Getter de missatge
     public String getMissatge() {
         this.arreglaCadena();
         return this.missatge;
     }
     
+    // Setter de clau
     public void setClau(String clauEncripta) {
         this.clauEncriptacio=clauEncripta;
     }
     
-    public byte[] enviaMsg() throws Exception {        
-        //String token="518bd9ed53f1b46ca694ddb5";
+    // Mètode per preparar l'enviament - si no té paràmetres, en posem de prova.
+    // Un cop provat, podrem eliminar aquesta definició
+    public byte[] enviaMsg() throws Exception {                
         String token="515dd85856861ee247ccf15a";
         String destinatari="prova";
         String remitent="xevimaresma@gmail.com";
@@ -57,20 +64,19 @@ public class MsgSender {
         return enviaMsg(token,destinatari,remitent,tipusMissatge);
     }
     
+    // Mètode per preparar enviament de missatge
+    // Rep token, destianari, remitent i tipus de missatge i retorna un byte
     public byte[] enviaMsg(String token, String destinatari, String remitent, int tipusMissatge) throws Exception {                        
-        byte[] sendData = new byte[64];          
-                        
-        Encryption encripta=new Encryption();
-        //encripta.setClau(this.clauEncriptacio);
+        byte[] sendData = new byte[64];                                  
+        Encryption encripta=new Encryption();        
         encripta.setClau(token);
         encripta.encrypt(this.missatge);
         this.arreglaCadena();                    
         sendData=encripta.getMsgEncriptat();     
-        //String prova=new String(sendData);
-        //System.out.println("Encriptat és "+prova);
-        //System.out.println("Token és "+this.clauEncriptacio);
         ByteBuffer buffer;
+        // Si el tipus és 3 (sol·licitud de missatges rebuts)         
         if (tipusMissatge==3) {
+            // Envioem el missatge afegint el remitent abans del missatge
             byte[] valors = new byte[260];        
             buffer = ByteBuffer.wrap(valors);
             buffer.putInt(tipusMissatge);        
@@ -82,6 +88,7 @@ public class MsgSender {
             buffer.position(196);
             buffer.put(sendData);           
         } else {
+            // Si no, serà el tipus 2, que desarà el missatge sencer, pensat pel client
             byte[] valors = new byte[196];        
             buffer = ByteBuffer.wrap(valors);
             buffer.putInt(tipusMissatge);        
@@ -95,9 +102,10 @@ public class MsgSender {
         return buffer.array();
     }
     
+    // Mètode per fer la tramesa via UDP
     public void enviamentUDP(byte[] msg){
         try {            
-            System.out.println(new String(msg));
+            //System.out.println(new String(msg));
             byte[] sendData = new byte[196];
             byte[] receiveData = new byte[1024]; 
             BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
@@ -111,6 +119,7 @@ public class MsgSender {
         }
     }
     
+    // Mètode per afegir ||END|| al final del text per poder eliminar els espais blancs al receptor.
     public void arreglaCadena() {
         String[] partsCadena;
         partsCadena=this.missatge.split("\\|\\|END\\|\\|");

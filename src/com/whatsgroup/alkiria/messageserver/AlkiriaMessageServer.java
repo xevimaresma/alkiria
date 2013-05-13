@@ -25,7 +25,9 @@ public class AlkiriaMessageServer {
     private int port=9876;
     DataBase db;
            
+    // Engeguem el servidor.
     public static void main(String[] args) throws Exception {        
+        // Instanciem un encriptador, sockets i iterem en un bucle infinit escoltant
         Encryption encripta=new Encryption();        
         System.out.println("UDP Server initialized");
         DatagramSocket serverSocket = new DatagramSocket(9876);
@@ -33,6 +35,7 @@ public class AlkiriaMessageServer {
         byte[] sendData = new byte[1024];
         String capitalizedSentence;
         while(true) {
+            // Si rebem un paquet, n'extraiem el TIPUS, que arriba en un INT al principi, en bytes.
             DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
             serverSocket.receive(receivePacket);            
             InetAddress IPAddress = receivePacket.getAddress();
@@ -41,6 +44,7 @@ public class AlkiriaMessageServer {
             ByteBuffer buffer = ByteBuffer.wrap(dadesRebudes);
             int tipus = buffer.getInt();
             String resposta="KO";
+            // Si tipus=2, 
             if (tipus==2) {                            
                 // Rutina d'enviament de missatge (remitent-servidor)
                 byte[] arrtoken = new byte[64];
@@ -50,25 +54,26 @@ public class AlkiriaMessageServer {
                 byte[] arrmsg = new byte[64];
                 buffer.get(arrmsg);                
                 String token=new String(arrtoken).trim(); 
-                
+                // Passem les dades
                 encripta.setClau(token);
-                System.out.println("Token: " + token);
+                //System.out.println("Token: " + token);
                 String desti=new String(arrdesti);
-                System.out.println("Destí: " + desti);
+                //System.out.println("Destí: " + desti);
                 String missatgeS=new String(arrmsg);
-                System.out.println("Missatge: " + missatgeS);
+                //System.out.println("Missatge: " + missatgeS);
                 DataBase db=new DataBase(); 
                 User user = new User();
                 user.setMail(token);                
                 BasicDBObject resultat;
+                // Cerquem l'usuari remitent
                 try {
                     resultat = (BasicDBObject)db.findById(user,token.trim());                                                
                 } catch (Exception e) {
                     resultat=null;
                 }
                 if(resultat==null){
-                    System.out.println("Error Login");
-                    // Preparar missatge d'error
+                    //System.out.println("Error Login");
+                    // Si no existeix ho mostrem
                     resposta="Error, el remitent no existeix";
                     byte[] valors = new byte[68];
                     ByteBuffer bufferSend = ByteBuffer.wrap(valors);
@@ -77,12 +82,13 @@ public class AlkiriaMessageServer {
                     DatagramPacket sendPacket = new DatagramPacket(bufferSend.array(), bufferSend.array().length, IPAddress, port);
                     serverSocket.send(sendPacket);
                 }else{
+                    // Si existeix desem el missatge a BD després de trobar el token del remitent
                     User usuariRemitent=new User();
                     usuariRemitent.loadFromDBObject(resultat);
                     String remitent=usuariRemitent.getMail();                    
-                    System.out.println("Remitent: "+usuariRemitent+" ("+usuariRemitent.getToken()+" - "+remitent+")");                    
+                    //System.out.println("Remitent: "+usuariRemitent+" ("+usuariRemitent.getToken()+" - "+remitent+")");                    
                     encripta.decrypt(arrmsg);            
-                    System.out.println("Missatge desencriptat ("+token+"): " + encripta.getMsgDesencriptat());                
+                    //System.out.println("Missatge desencriptat ("+token+"): " + encripta.getMsgDesencriptat());                
                     resposta="OK";
 
                     // Guardem el missatge                               
@@ -94,6 +100,7 @@ public class AlkiriaMessageServer {
                     missatge.setHoraLliurament(0);
                     db.save(missatge);     
 
+                    // I enviem un OK al client.
                     byte[] valors = new byte[68];
                     ByteBuffer bufferSend = ByteBuffer.wrap(valors);
                     bufferSend.putInt(2);        
@@ -114,7 +121,7 @@ public class AlkiriaMessageServer {
                 token=token.trim();
                 encripta.setClau(token);
                 user.setToken(token);
-                //BasicDBObject resultat = (BasicDBObject)db.find(user);
+                // Busquem l'usuari destinatari segons el token
                 BasicDBObject resultat;
                 try {
                     resultat = (BasicDBObject)db.findById(user,token.trim());                                                
@@ -123,7 +130,7 @@ public class AlkiriaMessageServer {
                 } 
                 User usuariCerca=new User();
                 if(resultat==null){
-                    System.out.println("Error Login");
+                    //System.out.println("Error Login");
                     // Preparar missatge d'error
                     resposta="Error, l'usuari no existeix";
                     byte[] valors = new byte[68];
@@ -138,9 +145,10 @@ public class AlkiriaMessageServer {
                     Message msgsCerca=new Message();
                     msgsCerca.setDestinatari(cercaMail);
                     Message msgTrobat=new Message();
-                    //DBCursor msgTrobats = (DBCursor)db.findAll(msgsCerca);                                        
+                    // I si el trobem, iterarem a través dels missatges coincidents (els que tenen el mateix destinatari)
                     DBCursor msgTrobats = (DBCursor)db.findMessages(cercaMail);                                                            
                     if(!msgTrobats.hasNext()) {
+                        // Si no hi ha missatge ho diem
                         resposta="No hi ha missatges per a "+cercaMail;
                         byte[] valors = new byte[68];
                         ByteBuffer bufferSend = ByteBuffer.wrap(valors);
@@ -150,10 +158,10 @@ public class AlkiriaMessageServer {
                         serverSocket.send(sendPacket); 
                     } else {      
                         int i=0;
+                        // Si n'hi ha, iterem i els mostrem.
                         while ( msgTrobats.hasNext() ) {                                                          
                             i++;
-                            BasicDBObject msgTemp=(BasicDBObject)msgTrobats.next();   
-                            System.out.println("Iteració "+i+" i "+msgTrobats.hasNext());
+                            BasicDBObject msgTemp=(BasicDBObject)msgTrobats.next();                               
                             resultat = (BasicDBObject)db.findById(msgTrobat,msgTemp.getString("_id"));
                             msgTrobat.loadFromDBObject(resultat); 
                             User usuariRemiteAra=new User();
@@ -163,11 +171,10 @@ public class AlkiriaMessageServer {
                             usuariRemiteAra2.loadFromDBObject(resultatRem);
                             String encriptaAra=usuariRemiteAra2.getToken();                            
                             
-                            System.out.println("A punt d'enviar "+msgTrobat.toString());
+                            //System.out.println("A punt d'enviar "+msgTrobat.toString());
                             MsgSender enviament = new MsgSender(msgTrobat.getMissatge(),encriptaAra);
                             byte[] enviamentMsg=enviament.enviaMsg(token,msgTrobat.getDestinatari(),msgTrobat.getRemitent(),3);
-                            try {                                
-                                //enviament.enviamentUDP(enviamentMsg);
+                            try {                                                              
                                 DatagramPacket sendPacket = new DatagramPacket(enviamentMsg, enviamentMsg.length, IPAddress, port);
                                 serverSocket.send(sendPacket);                                                                                                 
                             } catch (Exception e) {
