@@ -7,6 +7,7 @@ package com.whatsgroup.alkiria.messageserver;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
+import com.mongodb.WriteResult;
 import com.whatsgroup.alkiria.db.DataBase;
 import com.whatsgroup.alkiria.entities.*;
 import com.whatsgroup.alkiria.messages.MsgSender;
@@ -162,7 +163,7 @@ public class AlkiriaMessageServer {
                         while ( msgTrobats.hasNext() ) {                                                          
                             i++;
                             BasicDBObject msgTemp=(BasicDBObject)msgTrobats.next();                               
-                            resultat = (BasicDBObject)db.findById(msgTrobat,msgTemp.getString("_id"));
+                            resultat = (BasicDBObject)db.findById(msgTrobat,msgTemp.getString("_id"));                            
                             msgTrobat.loadFromDBObject(resultat); 
                             User usuariRemiteAra=new User();
                             user.setMail(msgTrobat.getRemitent());
@@ -170,16 +171,20 @@ public class AlkiriaMessageServer {
                             User usuariRemiteAra2=new User();
                             usuariRemiteAra2.loadFromDBObject(resultatRem);
                             String encriptaAra=usuariRemiteAra2.getToken();                            
-                            
+
                             //System.out.println("A punt d'enviar "+msgTrobat.toString());
                             MsgSender enviament = new MsgSender(msgTrobat.getMissatge(),encriptaAra);
-                            byte[] enviamentMsg=enviament.enviaMsg(token,msgTrobat.getDestinatari(),msgTrobat.getRemitent(),3);
+                            byte[] enviamentMsg=enviament.enviaMsg(token,msgTrobat.getDestinatari(),msgTrobat.getRemitent(),msgTrobat.getHoraLliurament(),msgTrobat.getHoraEnviament(),3);
+
+                            Message newDocument = new Message();
+                            newDocument.append("$set", new BasicDBObject().append("horaLliurament", (int)System.currentTimeMillis()));                                                       
+                            db.updateMsg(msgTrobat, newDocument);                            
                             try {                                                              
                                 DatagramPacket sendPacket = new DatagramPacket(enviamentMsg, enviamentMsg.length, IPAddress, port);
-                                serverSocket.send(sendPacket);                                                                                                 
+                                serverSocket.send(sendPacket);                                  
                             } catch (Exception e) {
                                 e.printStackTrace();                                
-                            }                                                        
+                            }   
                         }                        
                     }
                     

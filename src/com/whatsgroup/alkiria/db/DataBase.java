@@ -10,6 +10,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.WriteResult;
 import com.whatsgroup.alkiria.entities.AlkiriaDataBaseObject;
 import com.whatsgroup.alkiria.entities.User;
 import com.whatsgroup.alkiria.loginserver.AlkiriaLoginServer;
@@ -80,6 +81,11 @@ public class DataBase {
     public DBCursor findAll(AlkiriaDataBaseObject object){
         DBCollection tbl = db.getCollection(object.getTableName());        
         return tbl.find(object);
+    }
+    
+    public void updateMsg(BasicDBObject object,BasicDBObject object2) {
+        DBCollection tbl = db.getCollection("messages");        
+        WriteResult prova=tbl.update(object,object2);        
     }
     
     public DBCursor findMessages(String destinatari) {

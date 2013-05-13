@@ -98,7 +98,7 @@ public class AlkiriaClient {
         String msg = lector.nextLine();
         MsgSender missatge=new MsgSender(msg,this.token);        
         try {            
-            byte[] msgara = missatge.enviaMsg(this.token,destinatari,"",2);
+            byte[] msgara = missatge.enviaMsg(this.token,destinatari,"",0,0,2);
             sendMessageUDP(msgara);
         } catch (Exception e) {
             e.printStackTrace();
@@ -112,7 +112,7 @@ public class AlkiriaClient {
         MsgSender missatge=new MsgSender("");
         try {
             missatge.setClau(this.token);
-            byte[] msgara = missatge.enviaMsg(this.token,"","",3);
+            byte[] msgara = missatge.enviaMsg(this.token,"","",0,0,3);
             sendMessageUDP(msgara);
         } catch (Exception e) {
             e.printStackTrace();

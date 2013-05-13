@@ -7,6 +7,7 @@ package com.whatsgroup.alkiria.entities;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import java.sql.Time;
+import org.bson.types.ObjectId;
 
 
 /**
@@ -18,7 +19,8 @@ public class Message extends AlkiriaDataBaseObject{
     private String destinatari;
     private String missatge;
     private int horaEnviament;
-    private int horaLliurament;        
+    private int horaLliurament;  
+    ObjectId _id;
 
     public Message(){
     
@@ -71,14 +73,18 @@ public class Message extends AlkiriaDataBaseObject{
         if (obj.containsField("horaLliurament")) {
             this.horaLliurament = obj.getInt("horaLliurament");
         } else { this.horaLliurament=0; }
-        this.horaEnviament = obj.getInt("horaEnviament");                
+        this.horaEnviament = obj.getInt("horaEnviament");        
+        this._id=new ObjectId(obj.getString("_id"));
+    }
+    public String getId() {
+        return this._id.toString();
     }
 
     @Override
     public String getTableName() {
         return "messages";
     }
-    
+       
     public String toString(){
         return "Remitent: " + this.remitent + " Destinatari: " + this.destinatari + " Missatge: "+this.missatge+" Hora enviament: "+horaEnviament+" Hora Lliurament: "+horaLliurament;
     }

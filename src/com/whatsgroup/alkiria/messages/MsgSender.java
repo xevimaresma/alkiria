@@ -61,12 +61,12 @@ public class MsgSender {
         String destinatari="prova";
         String remitent="xevimaresma@gmail.com";
         int tipusMissatge=TIPUS_ENVIA_MSG;
-        return enviaMsg(token,destinatari,remitent,tipusMissatge);
+        return enviaMsg(token,destinatari,remitent,0,0,tipusMissatge);
     }
     
     // Mètode per preparar enviament de missatge
     // Rep token, destianari, remitent i tipus de missatge i retorna un byte
-    public byte[] enviaMsg(String token, String destinatari, String remitent, int tipusMissatge) throws Exception {                        
+    public byte[] enviaMsg(String token, String destinatari, String remitent,int horaLliurament,int horaEnviament, int tipusMissatge) throws Exception {                        
         byte[] sendData = new byte[64];                                  
         Encryption encripta=new Encryption();        
         encripta.setClau(token);
@@ -77,7 +77,7 @@ public class MsgSender {
         // Si el tipus és 3 (sol·licitud de missatges rebuts)         
         if (tipusMissatge==3) {
             // Envioem el missatge afegint el remitent abans del missatge
-            byte[] valors = new byte[260];        
+            byte[] valors = new byte[268];        
             buffer = ByteBuffer.wrap(valors);
             buffer.putInt(tipusMissatge);        
             buffer.put(token.trim().getBytes());
@@ -85,11 +85,15 @@ public class MsgSender {
             buffer.put(destinatari.trim().getBytes());
             buffer.position(132);
             buffer.put(remitent.trim().getBytes());
-            buffer.position(196);
-            buffer.put(sendData);           
+            buffer.position(196);                        
+            buffer.put(sendData);
+            buffer.position(260);
+            buffer.putInt(horaLliurament);
+            buffer.position(264);
+            buffer.putInt(horaEnviament);
         } else {
             // Si no, serà el tipus 2, que desarà el missatge sencer, pensat pel client
-            byte[] valors = new byte[196];        
+            byte[] valors = new byte[200];        
             buffer = ByteBuffer.wrap(valors);
             buffer.putInt(tipusMissatge);        
             buffer.put(token.getBytes());
@@ -97,6 +101,8 @@ public class MsgSender {
             buffer.put(destinatari.getBytes());
             buffer.position(132);
             buffer.put(sendData);
+            buffer.position(196);
+            buffer.putInt((int)System.currentTimeMillis());
         }
         
         return buffer.array();
