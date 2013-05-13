@@ -49,7 +49,8 @@ public class AlkiriaMessageServer {
                 buffer.get(arrdesti);
                 byte[] arrmsg = new byte[64];
                 buffer.get(arrmsg);                
-                String token=new String(arrtoken).trim();                
+                String token=new String(arrtoken).trim(); 
+                
                 encripta.setClau(token);
                 System.out.println("Token: " + token);
                 String desti=new String(arrdesti);
@@ -59,7 +60,12 @@ public class AlkiriaMessageServer {
                 DataBase db=new DataBase(); 
                 User user = new User();
                 user.setMail(token);                
-                BasicDBObject resultat = (BasicDBObject)db.findById(user,token.trim());                                                
+                BasicDBObject resultat;
+                try {
+                    resultat = (BasicDBObject)db.findById(user,token.trim());                                                
+                } catch (Exception e) {
+                    resultat=null;
+                }
                 if(resultat==null){
                     System.out.println("Error Login");
                     // Preparar missatge d'error
@@ -109,7 +115,12 @@ public class AlkiriaMessageServer {
                 encripta.setClau(token);
                 user.setToken(token);
                 //BasicDBObject resultat = (BasicDBObject)db.find(user);
-                BasicDBObject resultat = (BasicDBObject)db.findById(user,token.trim());  
+                BasicDBObject resultat;
+                try {
+                    resultat = (BasicDBObject)db.findById(user,token.trim());                                                
+                } catch (Exception e) {
+                    resultat=null;
+                } 
                 User usuariCerca=new User();
                 if(resultat==null){
                     System.out.println("Error Login");
