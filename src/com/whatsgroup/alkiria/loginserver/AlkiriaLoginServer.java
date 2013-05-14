@@ -1,40 +1,32 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Aquesta classe s'encarrega de gestionar les peticions de login i 
+ * creació de comtpes d'usuair de Alkiria
  */
 package com.whatsgroup.alkiria.loginserver;
 
-import com.whatsgroup.alkiria.entities.User;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.mongodb.MongoClient;
-import com.mongodb.ReadPreference;
-import com.sun.media.sound.AlawCodec;
 import com.whatsgroup.alkiria.db.DataBase;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author XeviPortatil
+ * Classe principal del servidor de login
  */
 public class AlkiriaLoginServer {
     //Constants
     public static final String STOP = "#quitServer";
     public static final int PORT = 35421;
     
+    //Pool de conexions establertes
     private ArrayList<ConnectionService> connections = new ArrayList<ConnectionService>();
+    //Marca de final del servei
     private boolean end=false;
 
     /**
+     * Mètode principal
      * @param args the command line arguments
      */
     public static void main(String[] args) {
@@ -42,24 +34,24 @@ public class AlkiriaLoginServer {
         server.listen();
     }
     
+    /*
+     * Mètode que s'encarrega de mantenir el socket escoltant a petitions de login
+     */
     public void listen(){
         ServerSocket socolServidor = null;
         try {
             socolServidor = new ServerSocket(PORT);
-            //socolServidor.setSoTimeout(5000);
-            byte[] entradaDades = new byte[1024];
-            
             System.out.println("AlkiriaLoginServer Inicialized...");
+            //Mentre no parem anem escoltant
             while(!end){
+                //Establim la conexió i la guardem al pool de conexions
                 Socket clientSocket = socolServidor.accept();
                 generateClientConnection(clientSocket);
             }
-            
-            //ServerConnection server = new ServerConnection();
-            //server.inicia();
         } catch (IOException ex) {
             Logger.getLogger(AlkiriaLoginServer.class.getName()).log(Level.SEVERE, null, ex);
         }finally{
+            //Tanquem totes les conexions obertes
             for (ConnectionService servei: getConnections()){
                 if(!servei.isClosed()){
                     System.out.println("Client Closed...");
@@ -76,14 +68,24 @@ public class AlkiriaLoginServer {
         }
     }
     
+    /*
+     * Mètode per tancar el servidor i les conexions esablertes
+     */
     public void close(){
         this.end=true;
     }
     
+    /*
+     * Mètode que retorna totes les conexions establertes
+     */
     protected ArrayList<ConnectionService> getConnections(){
         return connections;
     }
     
+    /*
+     * Mètode que genera una conexió en un fil separat i la manté oberta en
+     * el pool de conexions
+     */
     private void generateClientConnection(Socket clientToConnect){
         synchronized(getConnections()){
             System.out.println("Client connected...");
@@ -91,36 +93,5 @@ public class AlkiriaLoginServer {
             getConnections().add(servei);
             (new Thread(servei)).start();
         }
-    }
-    
-    private void testDB(){
-        try {
-            // TODO code application logic here
-            MongoClient mc = new MongoClient("alkiria.xevimr.eu");
-            DB db = mc.getDB("test");
-            //boolean auth = db.authenticate("admin", "admin".toCharArray());
-            
-            Set<String> colls = db.getCollectionNames();
-            
-            for (String s : colls){
-                System.out.println("Col: "+s);
-            }
-            
-            DBCollection usertbl = db.getCollection("users");
-            
-            //User user = new User("xevimaresma2@gmail.com","proves",null,"estat");
-            //usertbl.save(user);
-            
-            DBCursor cursor = usertbl.find();
-            while(cursor.hasNext()){
-                DBObject dades = cursor.next();
-                System.out.println("Email: "+dades.get("mail"));
-            }
-            
-            //System.out.println("Autenticat: "+auth);
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(AlkiriaLoginServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    
     }
 }
